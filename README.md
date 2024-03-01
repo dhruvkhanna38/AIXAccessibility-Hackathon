@@ -8,8 +8,3 @@ Project Breakdown
 - Create a keyboard shortcut that can be invoked
 - Add code to make the keyboard shortcut to hide those elements from the webpage
 
-Determine the structure of the webpage, using DOM and accessibility tree
-	- NVDA
-	- 
-        -   
-
