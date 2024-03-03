@@ -1,35 +1,47 @@
-document.querySelectorAll('*').forEach(element => {
-   element.addEventListener('mouseover', (event) => {
-     highlightElement(event.target);
-     event.stopPropagation(); // Stop the mouseover event from bubbling up
-   }, true); // Use capture to ensure this runs before other handlers
- 
-   element.addEventListener('mouseout', (event) => {
-     restoreOriginalStyle(event.target);
-     event.stopPropagation(); // Stop the mouseout event from bubbling up
-   }, true); // Use capture for consistency with mouseover
- 
-   element.addEventListener('click', (event) => {
-     hideElement(event);
-     event.preventDefault(); // Prevent any default action triggered by clicking
-     event.stopPropagation(); // Stop the click event from bubbling up
-   }, true); // Use capture to ensure this runs before other handlers
- });
- 
- function highlightElement(element) {
-   element.setAttribute('data-original-style', element.style.cssText);
-   element.style.border = '2px solid red';
-   element.style.cursor = 'pointer';
- }
- 
- function restoreOriginalStyle(element) {
-   const originalStyle = element.getAttribute('data-original-style');
-   element.style.cssText = originalStyle;
- }
- 
- function hideElement(event) {
-   event.target.style.display = 'none';
-   console.log(event.target.style.display);
- }
- 
- 
+let body = document.querySelector('body');
+
+let btnQurious = document.createElement('button');
+btnQurious.setAttribute('id', 'btnQurious');
+
+btnQurious.addEventListener('click', function () {
+  doSomething();
+});
+
+body.appendChild(btnQurious);
+
+let speechRecognition = new webkitSpeechRecognition();
+speechRecognition.continuous = true;
+speechRecognition.interimResults = true;
+speechRecognition.lang = 'en-us';
+
+let transcript = '';
+
+speechRecognition.onresult = function (event) {
+  transcript = '';
+  for (let i = 0; i < event.results.length; i++) {
+    transcript += event.results[i][0].transcript;
+  }
+};
+
+document.addEventListener('keypress', function (event) {
+   if(event.shiftKey && event.ctrlKey && event.code ==='KeyQ'){
+      btnQurious.click();
+   }
+});
+
+function doSomething() {
+  if (!btnQurious.hasAttribute('listening')) {
+    btnQurious.setAttribute('listening', true);
+    speechRecognition.start();
+  } else {
+    btnQurious.removeAttribute('listening');
+    speechRecognition.stop();
+    debugger;
+    const myPopup = new Popup({
+      id: 'my-popup',
+      title: 'Her is what you said',
+      content: transcript,
+    });
+    myPopup.show();
+  }
+}

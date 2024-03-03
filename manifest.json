@@ -2,10 +2,8 @@
    "manifest_version": 3,
    "name": "ClearView Assist",
    "description": "This extension will help you to clear your webpage based on user's selection",
-   "permissions": ["activeTab"],
    "version" : "1.0",
    "action": {
-      "default_popup": "popup.html",
       "default_icon": {
          "16": "images/icon16.png",
          "32": "images/icon32.png",
@@ -13,13 +11,19 @@
          "128": "images/icon128.png"
       }
    },
-   "background": {
-      "service_worker": "background.js"
-   },
-   "content_scripts": [
+    "host_permissions": [
+        "https://api.openai.com/v1/completions"
+    ],
+    "permissions": [
+        "activeTab",
+        "storage",
+        "downloads"
+    ],
+  
+    "content_scripts": [
       {
          "js": ["scripts/popup.js" , "scripts/content.js"],
-         "css" : [],
+         "css" : ["scripts/content.css"],
          "matches" : ["*://*/*"]
       }
    ]
