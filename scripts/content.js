@@ -29,19 +29,34 @@ document.addEventListener('keypress', function (event) {
    }
 });
 
-function doSomething() {
+
+async function doSomething() {
   if (!btnQurious.hasAttribute('listening')) {
     btnQurious.setAttribute('listening', true);
     speechRecognition.start();
   } else {
     btnQurious.removeAttribute('listening');
     speechRecognition.stop();
-    debugger;
     const myPopup = new Popup({
       id: 'my-popup',
-      title: 'Her is what you said',
+      title: 'Here is what you said',
       content: transcript,
-    });
+    });    
+    
     myPopup.show();
+
   }
 }
+
+
+let pageHTML = document.documentElement.innerHTML;
+
+
+console.log("Sending message to background:", { action: "sendHTML", html: JSON.stringify(pageHTML), prompt: "News and Events" });
+chrome.runtime.sendMessage({
+      action: "sendHTML",
+      html: JSON.stringify(pageHTML),
+      prompt: transcript
+    }, function(response) {
+      console.log("Response from background:", response);
+    });

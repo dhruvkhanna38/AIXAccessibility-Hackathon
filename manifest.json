@@ -12,19 +12,23 @@
       }
    },
     "host_permissions": [
-        "https://api.openai.com/v1/completions"
+        "https://api.openai.com/v1/completions",
+        "https://openaiglazko.openai.azure.com/*"
     ],
     "permissions": [
-        "activeTab",
-        "storage",
-        "downloads"
+      "storage",
+      "activeTab",
+      "webRequest",
+      "background"
     ],
-  
-    "content_scripts": [
+   "background": {
+      "service_worker": "background.js"
+   },
+   "content_scripts": [
       {
-         "js": ["scripts/popup.js" , "scripts/content.js"],
+         "js": ["scripts/popup.js" , "scripts/content.js", "background.js"],
          "css" : ["scripts/content.css"],
-         "matches" : ["*://*/*"]
+         "matches" : ["<all_urls>"]
       }
    ]
 
