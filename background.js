@@ -28,8 +28,10 @@ async function fetchClassesAndIds(html, prompt) {
             },
             body: JSON.stringify({ html, prompt }),
          })
-        
-         return response;
+
+         const jsonResponse = await response.json(); 
+         console.log(jsonResponse)
+         return jsonResponse;
       }
       catch(error){
          console.error("Error fetching classes and IDs:", error);
