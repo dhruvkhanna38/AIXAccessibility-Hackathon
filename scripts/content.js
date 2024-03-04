@@ -64,34 +64,38 @@ speechRecognition.onresult = function(event) {
       console.log("Script is running");
       confirmedText = initialSpeechText;
       console.log('Confirmed text:', confirmedText);
-      speak("Thank you, your input has been confirmed.", async () => {
 
-      console.log("Sending message to background:", { action: "sendHTML", html: collectElementDetails(), prompt: "News and Events" });
+      let uniqueIds = new Set();
+      let uniqueClasses = new Set();
+
+      let idsArray = [];
+      let classesArray = [];
+
+      speak("Thank you, your input has been confirmed.", () => {
+
+          console.log("Sending message to background:", { action: "sendHTML", html: collectElementDetails(), prompt: "News and Events" });
+          
+
+          chrome.runtime.sendMessage({
+            action: "sendHTML",
+            html: collectElementDetails(),
+            prompt: confirmedText
+          }, async function(response) {
+            const jsonResponse = await response;
+            console.log(jsonResponse)
+
+            await extractIdsAndClasses(jsonResponse, uniqueClasses, uniqueIds);
       
-      chrome.runtime.sendMessage({
-        action: "sendHTML",
-        html: collectElementDetails(),
-        prompt: "News and Events"
-      }, async function(response) {
-        const jsonResponse = response;
-        const uniqueIds = new Set();
-        const uniqueClasses = new Set();
-  
-        extractIdsAndClasses(response, uniqueIds, uniqueClasses);
-  
-        // Convert sets to arrays for easier use/display
-        const idsArray = Array.from(uniqueIds);
-        idsArray.push("primary");
-        const classesArray = Array.from(uniqueClasses);
-        classesArray.push("primary")
-        
-        await focusOnElement(idsArray, classesArray);
-        
+            // Convert sets to arrays for easier use/display
+            idsArray = Array.from(uniqueIds);
+            idsArray.push("primary");
+            classesArray = Array.from(uniqueClasses);
+            classesArray.push("primary")
+            focusOnElement(idsArray, classesArray); 
       });
        
-      await focusOnElement(confirmedText); // Main function call
-
       });
+
       currentState = 'initial'; // Reset for next input
     } else if (speechText.toLowerCase() === 'no') {
       speak("Let's try again. What do you want to see?", startSpeechRecognition);
@@ -145,17 +149,28 @@ async function focusOnElement(idsArray, classesArray) { // function to get and h
     // console.log("Element classes:", elementClasses);
     // console.log("Element ID:", element.id);
 
-
-   
     const isInIdsArray = idsArray.includes(String(element.id));
+
+    if(isInIdsArray){
+      console.log("Element ID:", element.id,"is in idsArray", idsArray);
+    }else{
+      console.log("Element ID:", element.id,"is not in idsArray", idsArray);
+    }
+
+
 
     
     const isInClassesArray = elementClasses.some(cls => classesArray.includes(cls));
 
+    if(isInClassesArray){
+      console.log("Element classes:", elementClasses,"is in classesArray", classesArray);
+    }else{
+      console.log("Element classes:", elementClasses,"is not in classesArray", classesArray);
+    }
+
     
 
     const present = idsArray.includes(String(element.id)) || elementClasses.some(cls => classesArray.includes(cls))
-    // console.log(element.tagName, "Element present:", present);
     if ( (present) ) {
       let current = element;
       // Make sure all parents of the matching element are visible
@@ -167,6 +182,11 @@ async function focusOnElement(idsArray, classesArray) { // function to get and h
   }
 
   console.log("Focus adjustment complete");
+}
+
+
+async function callBackgroundApi(confimedText, uniqueIds, uniqueClasses) {
+  
 }
 
 
