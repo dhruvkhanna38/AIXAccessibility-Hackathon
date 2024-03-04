@@ -34,6 +34,7 @@ function collectElementDetails() {
       tagName: element.tagName,
       classes: Array.from(element.classList), // Convert classList to an array
       id: element.id,
+      name: element.name
   }));
   return elementsDetails;
 }
@@ -73,7 +74,7 @@ speechRecognition.onresult = function(event) {
 
       speak("Thank you, your input has been confirmed.", () => {
 
-          console.log("Sending message to background:", { action: "sendHTML", html: collectElementDetails(), prompt: "News and Events" });
+          console.log("Sending message to background:", { action: "sendHTML", html: collectElementDetails(), prompt: confirmedText });
           
 
           chrome.runtime.sendMessage({
@@ -88,9 +89,10 @@ speechRecognition.onresult = function(event) {
       
             // Convert sets to arrays for easier use/display
             idsArray = Array.from(uniqueIds);
-            idsArray.push("primary");
+            idsArray.push("primary", "A8SBwf" , "A8SBwf emcav", "o3j99 ikrT4e om7nvf", "custom-container");
+          
             classesArray = Array.from(uniqueClasses);
-            classesArray.push("primary")
+            classesArray.push("primary", "A8SBwf", "A8SBwf emcav", "o3j99 ikrT4e om7nvf", "custom-container")
             focusOnElement(idsArray, classesArray); 
       });
        
