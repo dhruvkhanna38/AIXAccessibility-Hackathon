@@ -3,7 +3,7 @@ let body = document.querySelector('body');
 // Create the button and set its ID
 let btnQurious = document.createElement('button');
 btnQurious.setAttribute('id', 'btnQurious');
-btnQurious.textContent = 'Click to Speak'; // Make it clear what the button is for
+btnQurious.textContent = ''; // Make it clear what the button is for
  
 // Initialize speech recognition
 let speechRecognition = new (webkitSpeechRecognition || SpeechRecognition)();
@@ -42,7 +42,11 @@ speechRecognition.onresult = function(event) {
       console.log("Script is running");
       confirmedText = initialSpeechText;
       console.log('Confirmed text:', confirmedText);
-      speak("Thank you, your input has been confirmed.");
+      speak("Thank you, your input has been confirmed.", async () => {
+        
+      await focusOnElement(confirmedText); // Main function call
+
+      });
       currentState = 'initial'; // Reset for next input
     } else if (speechText.toLowerCase() === 'no') {
       speak("Let's try again. What do you want to see?", startSpeechRecognition);
@@ -67,3 +71,32 @@ document.addEventListener('keypress', function(event) {
     btnQurious.click();
   }
 });
+
+// ----- do not change above this ---- old working code---
+
+
+async function focusOnElement(confirmedText) { // function to get and hide elements as per Text
+  const allElements = document.body.getElementsByTagName('*');
+
+  // Hide all elements initially
+  for (const element of allElements) {
+    element.style.display = 'none';
+  }
+ console.log("all hidden")
+ setTimeout(() => {
+}, 2000);
+console.log("wait complete")
+  // Logic to find and show elements that match the confirmedText
+  // This is a very basic example. You might need more complex logic based on your needs
+  for (const element of allElements) {
+    if (element.textContent.toLowerCase().includes(confirmedText.toLowerCase())) {
+      let current = element;
+      // Make sure all parents of the matching element are visible
+      while (current !== document.body) {
+        current.style.display = '';
+        current = current.parentElement;
+      }
+    }
+  }
+  console.log("hide complete")
+}
