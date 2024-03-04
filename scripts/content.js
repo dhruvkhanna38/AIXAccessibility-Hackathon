@@ -48,15 +48,23 @@ async function doSomething() {
   }
 }
 
+function collectElementDetails() {
+  const elements = document.querySelectorAll('*'); // Select all elements in the DOM
+  const elementsDetails = Array.from(elements).map((element) => ({
+      tagName: element.tagName,
+      classes: Array.from(element.classList), // Convert classList to an array
+      id: element.id,
+  }));
+  return elementsDetails;
+}
 
-let pageHTML = document.documentElement.innerHTML;
 
 
-console.log("Sending message to background:", { action: "sendHTML", html: JSON.stringify(pageHTML), prompt: "News and Events" });
+console.log("Sending message to background:", { action: "sendHTML", html: collectElementDetails(), prompt: "News and Events" });
 chrome.runtime.sendMessage({
       action: "sendHTML",
-      html: JSON.stringify(pageHTML),
-      prompt: transcript
+      html: collectElementDetails(),
+      prompt: "News and Events"
     }, function(response) {
       console.log("Response from background:", response);
     });
