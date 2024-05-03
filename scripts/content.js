@@ -31,23 +31,22 @@ function startSpeechRecognition() {
 function collectElementDetails() {
   const elements = document.querySelectorAll('*'); // Select all elements in the DOM
   const elementsDetails = Array.from(elements).map((element) => ({
-      tagName: element.tagName,
-      classes: Array.from(element.classList), // Convert classList to an array
-      id: element.id,
-      name: element.name
+      // tagName: element.tagName,
+      // classes: Array.from(element.classList), // Convert classList to an array
+      // id: element.id,
+      // name: element.name,
+      text: element.innerText
   }));
   return elementsDetails;
 }
 
-function extractIdsAndClasses(elements, uniqueClasses, uniqueIds) {
+function extractInnerTexts(elements, uniqueInnertexts) {
   elements.forEach(element => {
-    if (element.id) {
-      uniqueIds.add(element.id);
-    }
-    if (element.classes.length) {
-      element.classes.forEach(className => uniqueClasses.add(className));
+    if (element.innerText) {
+      uniqueInnertexts.add(element.innerText);
     }
   });
+  console.log(uniqueInnertexts)
 }
 
  
@@ -66,8 +65,8 @@ speechRecognition.onresult = function(event) {
       confirmedText = initialSpeechText;
       console.log('Confirmed text:', confirmedText);
 
-      let uniqueIds = new Set();
-      let uniqueClasses = new Set();
+      let uniqueInnertexts = new Set();
+      //let uniqueClasses = new Set();
 
       let idsArray = [];
       let classesArray = [];
@@ -85,15 +84,15 @@ speechRecognition.onresult = function(event) {
             const jsonResponse = await response;
             console.log(jsonResponse)
 
-            await extractIdsAndClasses(jsonResponse, uniqueClasses, uniqueIds);
+            await extractInnerTexts(jsonResponse, uniqueInnertexts);
       
             // Convert sets to arrays for easier use/display
-            idsArray = Array.from(uniqueIds);
-            idsArray.push("primary", "A8SBwf" , "A8SBwf emcav", "o3j99 ikrT4e om7nvf", "custom-container");
+            innerTextsArray = Array.from(uniqueInnertexts);
+            // idsArray.push("primary", "A8SBwf" , "A8SBwf emcav", "o3j99 ikrT4e om7nvf", "custom-container");
           
-            classesArray = Array.from(uniqueClasses);
-            classesArray.push("primary", "A8SBwf", "A8SBwf emcav", "o3j99 ikrT4e om7nvf", "custom-container")
-            focusOnElement(idsArray, classesArray); 
+            // classesArray = Array.from(uniqueClasses);
+            // classesArray.push("primary", "A8SBwf", "A8SBwf emcav", "o3j99 ikrT4e om7nvf", "custom-container")
+            focusOnElement(innerTextsArray); 
       });
        
       });
@@ -128,7 +127,7 @@ document.addEventListener('keypress', function(event) {
 
 
 
-async function focusOnElement(idsArray, classesArray) { // function to get and hide elements as per Text
+async function focusOnElement(innerTextsArray) { // function to get and hide elements as per Text
   const allElements = document.body.getElementsByTagName('*');
   // Hide all elements initially
   for (const element of allElements) {
@@ -137,53 +136,29 @@ async function focusOnElement(idsArray, classesArray) { // function to get and h
 
   console.log("All elements hidden");
 
-  console.log("idsArray" ,idsArray)
-  console.log("classesArray" ,classesArray)
-  
+  console.log("innerTextsArray" ,innerTextsArray)
+  //console.log("classesArray" ,classesArray)
+    //  new code
 
-  // We don't actually need a timeout here unless there's a specific reason to delay the execution
-  // If you need to wait for something, consider using async/await with a proper async function or Promise
-
-  // Show elements that have matching IDs or classes
+  // Show elements that have matching inner texts
   for (const element of allElements) {
-    // Check if the element's ID is in idsArray or if any of its classes are in classesArray
-    const elementClasses = Array.from(element.classList);
-    // console.log("Element classes:", elementClasses);
-    // console.log("Element ID:", element.id);
+  const elementInnerText = element.innerText.trim();
 
-    const isInIdsArray = idsArray.includes(String(element.id));
+  // Check if the element's inner text is in innerTextsArray
+  const isInInnerTextsArray = innerTextsArray.includes(elementInnerText); 
 
-    if(isInIdsArray){
-      console.log("Element ID:", element.id,"is in idsArray", idsArray);
-    }else{
-      console.log("Element ID:", element.id,"is not in idsArray", idsArray);
-    }
-
-
-
-    
-    const isInClassesArray = elementClasses.some(cls => classesArray.includes(cls));
-
-    if(isInClassesArray){
-      console.log("Element classes:", elementClasses,"is in classesArray", classesArray);
-    }else{
-      console.log("Element classes:", elementClasses,"is not in classesArray", classesArray);
-    }
-
-    
-
-    const present = idsArray.includes(String(element.id)) || elementClasses.some(cls => classesArray.includes(cls))
-    if ( (present) ) {
-      let current = element;
-      // Make sure all parents of the matching element are visible
-      while (current !== document.body) {
-        current.style.display = '';
-        current = current.parentElement;
-      }
+  if (isInInnerTextsArray) {
+    //console.log("Element with inner text:", elementInnerText, "is in innerTextsArray", innerTextsArray);
+    let current = element;
+    // Make sure all parents of the matching element are visible
+    while (current !== document.body) {
+      current.style.display = '';
+      current = current.parentElement;
     }
   }
+}
 
-  console.log("Focus adjustment complete");
+ console.log("Focus adjustment complete");
 }
 
 
